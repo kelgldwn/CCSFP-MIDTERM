@@ -1,5 +1,5 @@
 <?php
-require_once 'dashboard/user/authentication/user-class.php';
+require_once __DIR__ . 'dashboard/user/authentication/user-class.php';
 $user = new USER();
 $config = new SystemConfig();
 $main_url = new MainUrl();

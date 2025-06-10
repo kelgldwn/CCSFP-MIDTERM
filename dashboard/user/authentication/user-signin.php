@@ -54,7 +54,7 @@ if (isset($_POST['btn-signin'])) {
                         exit();
                     }
                 } else {
-                    $_SESSION['status_titlek'] = "Sorry !";
+                    $_SESSION['status_title'] = "Sorry !";
                     $_SESSION['status'] = "No account found";
                     $_SESSION['status_code'] = "error";
                     $_SESSION['status_timer'] = 10000000;
@@ -71,17 +71,17 @@ if (isset($_POST['btn-signin'])) {
                         header("Location: ../../agent/property");
                         exit();
                     }
-                } elseif ($existingData['user_type'] == 7) {
+                } elseif ($existingData['user_type'] == 3) {
                     if ($user->login($email, $upass)) {
                         $_SESSION['status_title'] = "Hey !";
                         $_SESSION['status'] = "Welcome back! ";
                         $_SESSION['status_code'] = "success";
                         $_SESSION['status_timer'] = 10000;
-                        header("Location: ../");
+                        header("Location: ../../../signin");
                         exit();
                     }
                 } else {
-                    $_SESSION['status_titlek'] = "Sorry !";
+                    $_SESSION['status_title'] = "Sorry !";
                     $_SESSION['status'] = "No account found";
                     $_SESSION['status_code'] = "error";
                     $_SESSION['status_timer'] = 10000000;

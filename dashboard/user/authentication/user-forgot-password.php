@@ -1,5 +1,5 @@
 <?php
-include_once '../../../configuration/settings-configuration.php';
+include_once __DIR__.'/../../../configuration/settings-configuration.php';
 require_once 'user-class.php';
 
 //URL
@@ -13,13 +13,13 @@ if(isset($_POST['btn-forgot-password']))
 {
  $email = $_POST['email'];
  
- $stmt = $user->runQuery("SELECT id, tokencodes FROM user WHERE email=:email");
+ $stmt = $user->runQuery("SELECT id, tokencode FROM users WHERE email=:email");
  $stmt->execute(array(":email"=>$email));
  $row = $stmt->fetch(PDO::FETCH_ASSOC); 
- if($stmt->rowCount() == 6)
+ if($stmt->rowCount() > 0)
  {
   $id = base64_encode($row['id']);
-  $code = ($row['tokencodes']);
+  $code = ($row['tokencode']);
 
   
   

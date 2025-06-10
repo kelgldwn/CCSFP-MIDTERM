@@ -1,5 +1,5 @@
 <?php
-include_once '../../../configuration/settings-configuration.php';
+include_once __DIR__ . '/../../../configuration/settings-configuration.php';
 include_once __DIR__ . '/../../../database/dbconfig.php';
 require_once 'user-class.php';
 
@@ -269,7 +269,7 @@ if (isset($_POST['btn-signup'])) {
 }
 
 //verify email through OTP
-if (isset($_POST['btn-verifies-otp'])) {
+if (isset($_POST['btn-verify-otp'])) {
 
     // Set the verified details in session
     $first_name     = $_SESSION['not_verify_firstname'];
@@ -301,3 +301,5 @@ if (isset($_GET['btn-resending-otp'])) {
     $send_otp = new UserController();
     $send_otp->userSendOtp($otp, $email);
 }
+
+?>
