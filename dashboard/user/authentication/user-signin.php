@@ -16,26 +16,22 @@ if (isset($_POST['btn-signin'])) {
     $remoteip = $_SERVER['REMOTE_ADDR'];
     $url = "https://www.google.com/recaptcha/api/siteverify?secret=$site_secret_key&response=$response&remoteip=$remoteip";
     $data = file_get_contents($url);
-    $row =  json_decode($data, true);
+    $row = json_decode($data, true);
 
     if ($row['success'] == "true") {
         $email = trim($_POST['email']);
         $upass = trim($_POST['password']);
 
         $stmt = $user->runQuery('SELECT * FROM users WHERE email = :email');
-        $stmt->execute(array(
-            ":email" => $email,
-        ));
-
+        $stmt->execute(array(":email" => $email));
         $rowCount = $stmt->rowCount();
 
         if ($rowCount == 1) {
             $existingData = $stmt->fetch();
 
-            if ($_SESSION['property_details'] == 1) {
-
+            if (isset($_SESSION['property_details']) && $_SESSION['property_details'] == 1) {
                 if ($existingData['user_type'] == 8) {
-                    if ($agent->login($email, $upass)) {
+                    if ($user->login($email, $upass, $existingData['user_type'])) {
                         $_SESSION['status_title'] = "Hey !";
                         $_SESSION['status'] = "Welcome back! ";
                         $_SESSION['status_code'] = "success";
@@ -44,7 +40,7 @@ if (isset($_POST['btn-signin'])) {
                         exit();
                     }
                 } elseif ($existingData['user_type'] == 7) {
-                    if ($user->login($email, $upass)) {
+                    if ($user->login($email, $upass, $existingData['user_type'])) {
                         $_SESSION['status_title'] = "Hey !";
                         $_SESSION['status'] = "Welcome back! ";
                         $_SESSION['status_code'] = "success";
@@ -61,9 +57,9 @@ if (isset($_POST['btn-signin'])) {
                     header("Location: ../../../signin");
                     exit();
                 }
-            } else if ($_SESSION['property_details'] == NULL) {
+            } else { // No property_details
                 if ($existingData['user_type'] == 8) {
-                    if ($agent->login($email, $upass)) {
+                    if ($user->login($email, $upass, $existingData['user_type'])) {
                         $_SESSION['status_title'] = "Hey !";
                         $_SESSION['status'] = "Welcome back! ";
                         $_SESSION['status_code'] = "success";
@@ -72,7 +68,7 @@ if (isset($_POST['btn-signin'])) {
                         exit();
                     }
                 } elseif ($existingData['user_type'] == 3) {
-                    if ($user->login($email, $upass)) {
+                    if ($user->login($email, $upass, $existingData['user_type'])) {
                         $_SESSION['status_title'] = "Hey !";
                         $_SESSION['status'] = "Welcome back! ";
                         $_SESSION['status_code'] = "success";
@@ -103,6 +99,6 @@ if (isset($_POST['btn-signin'])) {
         $_SESSION['status_code'] = "error";
         $_SESSION['status_timer'] = 40000;
         header("Location: ../../../signin");
-        exit;
+        exit();
     }
 }

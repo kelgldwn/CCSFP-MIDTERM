@@ -100,12 +100,17 @@ public function systemLogo(){
   }
  }
  
- public function login($email,$hash_password)
+ public function login($email, $hash_password, $user_type)
  {
   try
   {
-   $stmt = $this->conn->prepare("SELECT * FROM user WHERE email=:email_id AND account_status = :account_status AND user_type = :user_type");
-   $stmt->execute(array(":email_id"=>$email , ":account_status" => "active", "user_type" => 9));
+    $stmt = $this->conn->prepare("SELECT * FROM users WHERE email=:email_id AND account_status = :account_status AND user_type = :user_type");
+$stmt->execute(array(
+    ":email_id" => $email,
+    ":account_status" => "active",
+    ":user_type" => $user_type
+));
+
    $userRow=$stmt->fetch(PDO::FETCH_ASSOC);
    
 
