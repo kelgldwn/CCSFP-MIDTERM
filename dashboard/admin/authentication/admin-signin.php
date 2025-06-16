@@ -1,5 +1,5 @@
 <?php
-include_once __DIR__. '/../../../src/api/api.php';
+include_once __DIR__. '/../../src/api/api.php';
 require_once 'admin-class.php';
 
 $user = new ADMIN();
