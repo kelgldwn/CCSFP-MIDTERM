@@ -18,7 +18,7 @@ if (isset($_POST['btn-signin'])) {
     $data = file_get_contents($url);
     $row = json_decode($data, true);
 
-    if ($row['success'] == "true") {
+    if (!empty($row['success'])) {
         $email = trim($_POST['email']);
         $upass = trim($_POST['password']);
 
@@ -28,10 +28,11 @@ if (isset($_POST['btn-signin'])) {
 
         if ($rowCount == 1) {
             $existingData = $stmt->fetch();
+            $userType = $existingData['user_type'];
 
             if (isset($_SESSION['property_details']) && $_SESSION['property_details'] == 1) {
-                if ($existingData['user_type'] == 8) {
-                    if ($user->login($email, $upass, $existingData['user_type'])) {
+                if ($userType == 2) {
+                    if ($agent->login($email, $upass)) {
                         $_SESSION['status_title'] = "Hey !";
                         $_SESSION['status'] = "Welcome back! ";
                         $_SESSION['status_code'] = "success";
@@ -39,8 +40,8 @@ if (isset($_POST['btn-signin'])) {
                         header("Location: ../../agent/property");
                         exit();
                     }
-                } elseif ($existingData['user_type'] == 7) {
-                    if ($user->login($email, $upass, $existingData['user_type'])) {
+                } elseif ($userType == 3) {
+                    if ($user->login($email, $upass, $userType)) {
                         $_SESSION['status_title'] = "Hey !";
                         $_SESSION['status'] = "Welcome back! ";
                         $_SESSION['status_code'] = "success";
@@ -57,9 +58,9 @@ if (isset($_POST['btn-signin'])) {
                     header("Location: ../../../signin");
                     exit();
                 }
-            } else { // No property_details
-                if ($existingData['user_type'] == 8) {
-                    if ($user->login($email, $upass, $existingData['user_type'])) {
+            } else {
+                if ($userType == 2) {
+                    if ($agent->login($email, $upass)) {
                         $_SESSION['status_title'] = "Hey !";
                         $_SESSION['status'] = "Welcome back! ";
                         $_SESSION['status_code'] = "success";
@@ -67,13 +68,13 @@ if (isset($_POST['btn-signin'])) {
                         header("Location: ../../agent/property");
                         exit();
                     }
-                } elseif ($existingData['user_type'] == 3) {
-                    if ($user->login($email, $upass, $existingData['user_type'])) {
+                } elseif ($userType == 3) {
+                    if ($user->login($email, $upass, $userType)) {
                         $_SESSION['status_title'] = "Hey !";
                         $_SESSION['status'] = "Welcome back! ";
                         $_SESSION['status_code'] = "success";
                         $_SESSION['status_timer'] = 10000;
-                        header("Location: ../../../signin");
+                        header("Location: ../");
                         exit();
                     }
                 } else {
