@@ -1,69 +1,63 @@
 <?php
-require_once __DIR__ . 'dashboard/user/authentication/user-class.php';
+require_once __DIR__ . '/dashboard/user/authentication/user-class.php';
 $user = new USER();
 $config = new SystemConfig();
 $main_url = new MainUrl();
-if(empty($_GET['id']) && empty($_GET['code']))
-{
- $user->redirect('signin');
+if (empty($_GET['id']) && empty($_GET['code'])) {
+    $user->redirect('signin');
 }
 
-if(isset($_GET['id']) && isset($_GET['code']))
-{
- $id = base64_decode($_GET['id']);
- $code = $_GET['code'];
- 
- $stmt = $user->runQuery("SELECT * FROM users WHERE id=:uid AND tokencode=:token");
- $stmt->execute(array(":uid"=>$id,":token"=>$code));
- $rows = $stmt->fetch(PDO::FETCH_ASSOC);
- 
- if($stmt->rowCount() == 1)
- {
-  if(isset($_POST['btn-update-password']))
-  {
-   	$new_password 		= trim($_POST['password']);
-	$confirm_password   = trim($_POST['confirm_password']);
-    $code 				= md5(uniqid(rand()));
-    $new_hash_password 	= md5($new_password);
+if (isset($_GET['id']) && isset($_GET['code'])) {
+    $id = base64_decode($_GET['id']);
+    $code = $_GET['code'];
 
-	if($new_password != $confirm_password) {
-        $_SESSION['status_title'] = "Oops!";
-        $_SESSION['status'] = "Passwords do not match. Please try again.";
+    $stmt = $user->runQuery("SELECT * FROM users WHERE id=:uid AND tokencode=:token");
+    $stmt->execute(array(":uid" => $id, ":token" => $code));
+    $rows = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if ($stmt->rowCount() == 1) {
+        if (isset($_POST['btn-update-password'])) {
+            $new_password         = trim($_POST['password']);
+            $confirm_password   = trim($_POST['confirm_password']);
+            $code                 = md5(uniqid(rand()));
+            $new_hash_password     = md5($new_password);
+
+            if ($new_password != $confirm_password) {
+                $_SESSION['status_title'] = "Oops!";
+                $_SESSION['status'] = "Passwords do not match. Please try again.";
+                $_SESSION['status_code'] = "error";
+                $_SESSION['status_timer'] = 100000;
+                $url = "http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]"; // Get the current URL
+                header("Location: $url"); // Add this line to redirect back to the same page
+                exit();
+            }
+
+            $stmt = $user->runQuery("UPDATE users SET password=:password, tokencode=:token WHERE id=:uid");
+            $stmt->execute(array(":token" => $code, ":password" => $new_hash_password, ":uid" => $rows['id']));
+
+            $_SESSION['status_title'] = "Success !";
+            $_SESSION['status'] = "Password is updated. Redirecting to Sign in.";
+            $_SESSION['status_code'] = "success";
+            header("refresh:4;signin");
+        }
+    } else {
+        $_SESSION['status_title'] = "Oops !";
+        $_SESSION['status'] = "Your token is expired.";
         $_SESSION['status_code'] = "error";
-        $_SESSION['status_timer'] = 100000;
-		$url = "http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]"; // Get the current URL
-		header("Location: $url"); // Add this line to redirect back to the same page
-        exit();
     }
-
-    $stmt = $user->runQuery("UPDATE users SET password=:password, tokencode=:token WHERE id=:uid");
-    $stmt->execute(array(":token"=>$code,":password"=>$new_hash_password,":uid"=>$rows['id']));
-    
-    $_SESSION['status_title'] = "Success !";
-    $_SESSION['status'] = "Password is updated. Redirecting to Sign in.";
-    $_SESSION['status_code'] = "success";
-    header("refresh:4;signin");
-   
-  } 
- }
- else
- {
-    $_SESSION['status_title'] = "Oops !";
-    $_SESSION['status'] = "Your token is expired.";
-    $_SESSION['status_code'] = "error";
- }
- 
 }
 
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <?php include_once 'configuration/header.php'; ?>
     <title>MAGRENT | Reset Password?</title>
 </head>
 <!-- page wrapper -->
+
 <body>
     <div class="boxed_wrapper">
         <!-- preloader -->
@@ -229,15 +223,15 @@ if(isset($_GET['id']) && isset($_GET['code']))
                                         <form action="" method="post" class="default-form">
                                             <div class="form-group">
                                                 <label>New Password</label>
-                                                <input type="password"  name="password" autocapitalize="on" autocorrect="off" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" placeholder="Enter your new password" required autofocus data-eye>
+                                                <input type="password" name="password" autocapitalize="on" autocorrect="off" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" placeholder="Enter your new password" required autofocus data-eye>
                                             </div>
 
                                             <div class="form-group">
                                                 <label>Confirm Password</label>
-                                                <input type="password"  name="confirm_password" autocapitalize="on" autocorrect="off" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" placeholder="Confirm your password" required autofocus data-eye>
+                                                <input type="password" name="confirm_password" autocapitalize="on" autocorrect="off" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" placeholder="Confirm your password" required autofocus data-eye>
                                             </div>
                                             <div class="form-group message-btn">
-                                                <button type="submit"  class="theme-btn btn-one" name="btn-update-password">Reset Password</button>
+                                                <button type="submit" class="theme-btn btn-one" name="btn-update-password">Reset Password</button>
                                             </div>
                                         </form>
                                         <div class="othre-text">

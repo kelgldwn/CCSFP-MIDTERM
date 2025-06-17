@@ -108,7 +108,7 @@ public function systemLogo(){
 $stmt->execute(array(
     ":email_id" => $email,
     ":account_status" => "active",
-    ":user_type" => $user_type
+    ":user_type" => 3
 ));
 
    $userRow=$stmt->fetch(PDO::FETCH_ASSOC);

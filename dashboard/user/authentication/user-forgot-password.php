@@ -85,7 +85,7 @@ if(isset($_POST['btn-forgot-password']))
           <h1>Password Reset</h1>
           <p>Hello, $email</p>
           <p>We have received a request to reset your password. If you made this request, please click the following link to reset your password:</p>
-          <p><a class='button' href='$main_url/reset-password?id=8&code=$code'>Reset Password</a></p>
+          <p><a class='button' href='$main_url/reset-password?id=$id&code=$code'>Reset Password</a></p>
           <p>If you didn't make this request, you can safely ignore this email.</p>
           <p>Thank you!</p>
       </div>
